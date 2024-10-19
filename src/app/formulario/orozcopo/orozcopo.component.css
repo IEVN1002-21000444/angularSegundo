@@ -1,0 +1,32 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-star-glow { color: #e0fffc; }
+  .text-galaxy-blue { color: #3b82f6; }
+  .text-nebula-purple { color: #a78bfa; }
+  .text-cosmic-gold { color: #ffd700; }
+  .text-moonlight-silver { color: #c0c0c0; }
+
+  .border-star-glow { border-color: #e0fffc; }
+  .border-galaxy-blue { border-color: #3b82f6; }
+  .border-nebula-purple { border-color: #a78bfa; }
+  .border-cosmic-gold { border-color: #ffd700; }
+  .border-moonlight-silver { border-color: #c0c0c0; }
+
+  .focus\:ring-aurora-purple { --tw-ring-color: #a78bfa; }
+  .focus\:ring-aurora-blue { --tw-ring-color: #3b82f6; }
+  .focus\:ring-aurora-gold { --tw-ring-color: #ffd700; }
+
+  .shadow-mystic {
+    box-shadow: 0 4px 10px rgba(164, 120, 250, 0.8),
+                0 0 20px rgba(255, 215, 0, 0.8);
+  }
+
+  .shadow-outer-space {
+    box-shadow: 0 6px 30px rgba(0, 0, 0, 0.8),
+                0 0 50px rgba(57, 82, 178, 0.6),
+                0 0 100px rgba(164, 120, 250, 0.7);
+  }
+}

@@ -8,5 +8,6 @@ export default[
     {
         path: 'sing-up',
         loadComponent:()=> import ('./sing-up/sing-up.component')
-    }
+    },
+
 ]as Routes

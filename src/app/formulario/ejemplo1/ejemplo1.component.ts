@@ -15,7 +15,7 @@ interface Usuarios{
   templateUrl: './ejemplo1.component.html',
   styleUrl: './ejemplo1.component.css'
 })
-export class Ejemplo1Component implements OnInit{
+export default class Ejemplo1Component implements OnInit{
   formGroup!:FormGroup;
 
   materia='pwa'

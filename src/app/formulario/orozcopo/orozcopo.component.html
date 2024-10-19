@@ -1,0 +1,73 @@
+
+
+<!-- Form Section -->
+<div class="bg-gradient-to-r from-gray-800 to-black shadow-lg rounded-xl p-8 max-w-lg mx-auto mt-10 text-gray-200">
+  <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+    <!-- Nombre -->
+    <div class="mb-6">
+      <label for="nombre" class="block text-lg font-semibold mb-2">Nombre</label>
+      <input type="text" id="nombre" placeholder="Ingrese su nombre" formControlName="nombre"
+        class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+    </div>
+
+    <!-- Apellido Paterno -->
+    <div class="mb-6">
+      <label for="apaterno" class="block text-lg font-semibold mb-2">Apellido Paterno</label>
+      <input type="text" id="apaterno" placeholder="Ingrese su apellido" formControlName="apaterno"
+        class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+    </div>
+
+    <!-- Apellido Materno -->
+    <div class="mb-6">
+      <label for="amaterno" class="block text-lg font-semibold mb-2">Apellido Materno</label>
+      <input type="text" id="amaterno" placeholder="Ingrese su apellido" formControlName="amaterno"
+        class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+    </div>
+
+    <!-- Fecha de Nacimiento -->
+    <div class="mb-6">
+      <label class="block text-lg font-semibold mb-2">Fecha de Nacimiento</label>
+      <div class="grid grid-cols-3 gap-3">
+        <input type="number" id="dia" placeholder="Día" max="31" formControlName="dia"
+          class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+        <input type="number" id="mes" placeholder="Mes" min="1" max="12" formControlName="mes"
+          class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+        <input type="number" id="year" placeholder="Año" min="1984" formControlName="year"
+          class="w-full border border-gray-400 bg-gray-900 rounded-md px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 shadow-md" />
+      </div>
+    </div>
+
+    <!-- Sexo -->
+    <div class="mb-6">
+      <label class="block text-lg font-semibold mb-2">Sexo</label>
+      <div class="flex space-x-4">
+        <div class="flex items-center">
+          <input id="hombre" formControlName="sexo" type="radio" name="sexo" value="hombre"
+            class="w-5 h-5 text-indigo-600 bg-gray-900 border-gray-400 focus:ring-2 focus:ring-indigo-500" />
+          <label for="hombre" class="ml-2">Hombre</label>
+        </div>
+        <div class="flex items-center">
+          <input id="mujer" formControlName="sexo" type="radio" name="sexo" value="mujer"
+            class="w-5 h-5 text-indigo-600 bg-gray-900 border-gray-400 focus:ring-2 focus:ring-indigo-500" />
+          <label for="mujer" class="ml-2">Mujer</label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <button type="submit" (click)="resultados()"
+      class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-purple-600 hover:to-indigo-600 text-white font-bold py-2 rounded-md focus:outline-none focus:ring-4 focus:ring-indigo-500 shadow-lg">
+      Calcular
+    </button>
+  </form>
+</div>
+
+<!-- Result Section -->
+<div class="bg-gradient-to-r from-gray-800 to-black shadow-lg rounded-xl p-8 max-w-lg mx-auto mt-10 text-center text-gray-200">
+  <h2 class="text-2xl font-semibold mb-4">Resultado del Zodiaco Chino</h2>
+  <p class="text-lg">Nombre Completo: <span class="font-bold">{{ nombreCompleto }}</span></p>
+  <p class="text-lg">Año de Nacimiento: <span class="font-bold">{{ year }}</span></p>
+  <p class="text-lg">Edad: <span class="font-bold">{{ edad }}</span> años</p>
+  <p class="text-lg">Signo Zodiacal Chino: <span class="font-bold">{{ signoZodiacal }}</span></p>
+  <img [src]="imagenSigno" alt="{{ signoZodiacal }}" class="w-32 h-32 mx-auto mt-4 rounded-full shadow-md" />
+</div>
