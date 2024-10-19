@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormsModule, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormsModule, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 interface Empleado {
@@ -8,9 +8,6 @@ interface Empleado {
   email: string;
   edad: number;
   horas: number;
-  pago: number;
-  extra: number;
-  subtotal: number;
 }
 
 @Component({
@@ -29,6 +26,8 @@ export default class EmpleadosComponent implements OnInit {
   successMessage: string = '';     // Para mensajes de éxito
   matriculaModificar: number | null = null;
   matriculaEliminar: number | null = null;
+  tablaVisible: boolean = false;
+
 
   constructor(private fb: FormBuilder) {}
 
@@ -40,66 +39,67 @@ export default class EmpleadosComponent implements OnInit {
 
   initForm(): FormGroup {
     return this.fb.group({
-      matricula: [''],
-      nombre: [''],
-      email: [''],
-      edad: [''],
-      horas: ['']
+      matricula: ['', [Validators.required]],  // Obligatorio
+      nombre: ['', [Validators.required]],     // Obligatorio
+      email: ['', [Validators.required, Validators.email]],  // Obligatorio y formato de correo válido
+      edad: ['', [Validators.required, Validators.min(18)]], // Obligatorio y mayor de edad
+      horas: ['', [Validators.required, Validators.min(1)]]  // Obligatorio y al menos 1 hora
     });
   }
 
   onSubmit(): void {
+    if (this.formulario.invalid) {
+      this.successMessage = '';  
+      return;
+    }
+  
     const { matricula, nombre, email, edad, horas } = this.formulario.value;
-
-    // Verificar si la matrícula o correo ya existen
+  
     const matriculaExiste = this.empleados.some(empleado => empleado.matricula === matricula);
     const correoExiste = this.empleados.some(empleado => empleado.email === email);
-
+  
     if (matriculaExiste && this.matriculaModificar === null) {
-      this.errorMessage = 'La matrícula ya existe. Ingrese otra.';
-      this.successMessage = '';  // Limpiar mensaje de éxito
+      this.successMessage = '';  
       return;
     }
-
+  
     if (correoExiste && this.matriculaModificar === null) {
-      this.errorMessage = 'El correo ya existe. Ingrese otro.';
-      this.successMessage = '';  // Limpiar mensaje de éxito
+      this.successMessage = '';  
       return;
     }
-
+  
     const pagoNormal = this.calcularPagoNormal(horas);
     const pagoExtra = this.calcularPagoExtra(horas);
     const subtotal = pagoNormal + pagoExtra;
-
+  
     const empleado: Empleado = {
       matricula,
       nombre,
       email,
       edad,
       horas,
-      pago: pagoNormal,
-      extra: pagoExtra,
-      subtotal
     };
-
+  
     if (this.matriculaModificar !== null) {
-      const empleadoIndex = this.empleados.findIndex(e => e.matricula === this.matriculaModificar);
-      if (empleadoIndex !== -1) {
-        this.empleados[empleadoIndex] = empleado;
+      for (let i = 0; i < this.empleados.length; i++) {
+        if (this.empleados[i].matricula === this.matriculaModificar) {
+          this.empleados[i] = empleado; 
+          break; 
+        }
       }
       this.matriculaModificar = null;
-      this.successMessage = 'Empleado modificado correctamente.';
-      this.errorMessage = '';  // Limpiar mensaje de error
     } else {
       this.empleados.push(empleado);
-      this.successMessage = 'Empleado agregado correctamente.';
-      this.errorMessage = '';  // Limpiar mensaje de error
     }
-
+  
     localStorage.setItem('empleados', JSON.stringify(this.empleados));
+  
     this.calcularTotalPagos();
     this.formulario.reset();
+    this.tablaVisible = false;
+
   }
+  
 
   cargarEmpleados(): void {
     const empleadosGuardados = localStorage.getItem('empleados');
@@ -117,30 +117,54 @@ export default class EmpleadosComponent implements OnInit {
   }
 
   calcularTotalPagos(): void {
-    this.totalPagos = this.empleados.reduce((sum, empleado) => sum + empleado.subtotal, 0);
+    this.totalPagos = this.empleados.reduce((sum, empleado) => {
+      const pagoNormal = this.calcularPagoNormal(empleado.horas);
+      const pagoExtra = this.calcularPagoExtra(empleado.horas);
+      const subtotal = pagoNormal + pagoExtra;
+      return sum + subtotal;
+    }, 0);
+  }
+  mostrarOcultarTabla() {
+    this.tablaVisible = !this.tablaVisible;
   }
 
   buscarEmpleadoPorMatricula(): void {
     if (this.matriculaModificar !== null) {
-      const empleado = this.empleados.find(e => e.matricula === this.matriculaModificar);
+      let empleado = null;
+  
+      // Usar un bucle for para buscar el empleado
+      for (let i = 0; i < this.empleados.length; i++) {
+        if (this.empleados[i].matricula === this.matriculaModificar) {
+          empleado = this.empleados[i];
+          break; 
+        }
+      }
+  
       if (empleado) {
-        this.formulario.patchValue(empleado);  // Cargar datos en el formulario
-        this.successMessage = '';  // Limpiar mensaje de éxito
+        this.formulario.patchValue(empleado);  
+        this.successMessage = '';  
       } else {
-        this.errorMessage = 'Empleado no encontrado.';
-        this.successMessage = '';  // Limpiar mensaje de éxito
+        this.successMessage = '';  
       }
     }
   }
-
+  
   eliminarEmpleadoPorMatricula(): void {
     if (this.matriculaEliminar !== null) {
-      this.empleados = this.empleados.filter(empleado => empleado.matricula !== this.matriculaEliminar);
+      const empleadosActualizados = [];
+  
+      for (let i = 0; i < this.empleados.length; i++) {
+        if (this.empleados[i].matricula !== this.matriculaEliminar) {
+          empleadosActualizados.push(this.empleados[i]);
+        }
+      }
+      this.empleados = empleadosActualizados;
       localStorage.setItem('empleados', JSON.stringify(this.empleados));
+  
       this.calcularTotalPagos();
       this.matriculaEliminar = null;
       this.successMessage = 'Empleado eliminado correctamente.';
-      this.errorMessage = '';  // Limpiar mensaje de error
     }
   }
+  
 }
